@@ -1,3 +1,4 @@
+import { Card, Divider, Group, Stack, Title } from '@mantine/core';
 import {
 	CheckerboardOverlay,
 	ConstraintsSystem,
@@ -5,16 +6,21 @@ import {
 	MovementSystem,
 	OutlineOverlay,
 } from '@sgty/pixil';
-import React from 'react';
+import React, { useRef } from 'react';
 import HistoryList from '../HistoryList';
 import useEditor from '../useEditor';
+import useSWRImmutable from 'swr/immutable';
 
-export default function BaseEditorDemo({ Component }) {
+export default function BaseEditorDemo({ Component, id }) {
 	const [ref, editor] = useEditor({
 		width: 192,
 		height: 192,
 		backgroundColor: 0xaeaeae,
 	});
+
+	const imageLoadedRef = useRef<Promise<any>>();
+
+	// useSWRImmutable(['code', id], () => fetch(`${}`))
 
 	React.useEffect(() => {
 		if (editor) {
@@ -32,7 +38,7 @@ export default function BaseEditorDemo({ Component }) {
 			// editor.addTool(new Brush(editor, { buttons: [0] }));
 
 			// set canvas size to first image load
-			loadImage('logo192.png').then((image) => {
+			imageLoadedRef.current = loadImage('logo192.png').then((image) => {
 				editor.setCanvasSize(image.width, image.height);
 
 				// draw the image onto the layer
@@ -47,18 +53,40 @@ export default function BaseEditorDemo({ Component }) {
 
 			const cs = new ConstraintsSystem({ minZoom: 1, maxZoom: 10 });
 			editor.addAddon(cs);
+
+			console.log(editor);
 		}
 	}, [editor]);
 
 	return (
-		<div style={{ display: 'flex' }}>
-			<div>
-				<div ref={ref} />
-			</div>
-			<div>
-				<HistoryList editor={editor} />
-			</div>
-			{editor && <Component editor={editor} />}
-		</div>
+		<Stack>
+			<Title order={1}>{id}</Title>
+			<Group align='start'>
+				<Card withBorder>
+					<Stack>
+						<div
+							ref={ref}
+							style={{
+								width: '192px',
+								height: '192px',
+								display: 'flex',
+							}}
+						/>
+						<Card.Section>
+							<Divider />
+						</Card.Section>
+						<HistoryList editor={editor} />
+					</Stack>
+				</Card>
+				<Card withBorder>
+					{editor && (
+						<Component
+							editor={editor}
+							imageLoadedRef={imageLoadedRef}
+						/>
+					)}
+				</Card>
+			</Group>
+		</Stack>
 	);
 }
