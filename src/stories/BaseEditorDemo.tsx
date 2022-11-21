@@ -10,6 +10,8 @@ import React, { useRef } from 'react';
 import HistoryList from '../HistoryList';
 import useEditor from '../useEditor';
 import useSWRImmutable from 'swr/immutable';
+import axios from 'axios';
+import { Prism } from '@mantine/prism';
 
 export default function BaseEditorDemo({ Component, id }) {
 	const [ref, editor] = useEditor({
@@ -20,7 +22,11 @@ export default function BaseEditorDemo({ Component, id }) {
 
 	const imageLoadedRef = useRef<Promise<any>>();
 
-	// useSWRImmutable(['code', id], () => fetch(`${}`))
+	const { data } = useSWRImmutable(['code', id], () =>
+		axios.get(
+			`https://raw.githubusercontent.com/2mer/pixil-storybook/main/src/stories/examples/${id}Example.tsx`
+		)
+	);
 
 	React.useEffect(() => {
 		if (editor) {
@@ -34,8 +40,6 @@ export default function BaseEditorDemo({ Component, id }) {
 				new CheckerboardOverlay({ c1: 0x797979, c2: 0xc3c3c3 })
 			);
 			editor.addAddon(new OutlineOverlay({ width: 1, color: 0x323232 }));
-
-			// editor.addTool(new Brush(editor, { buttons: [0] }));
 
 			// set canvas size to first image load
 			imageLoadedRef.current = loadImage('logo192.png').then((image) => {
@@ -86,6 +90,9 @@ export default function BaseEditorDemo({ Component, id }) {
 						/>
 					)}
 				</Card>
+				{Boolean(data?.data) && (
+					<Prism language='tsx'>{data!.data}</Prism>
+				)}
 			</Group>
 		</Stack>
 	);
