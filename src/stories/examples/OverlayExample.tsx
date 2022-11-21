@@ -30,16 +30,16 @@ const OverlayExample = ({ editor }: { editor: Editor }) => {
 			return bunny;
 		};
 
-		const bunnyRelative = createBunny();
-		const bunnyAbsolute = createBunny();
+		const relativeBunny = createBunny();
+		const absoluteBunny = createBunny();
 
-		editor.viewport.addChild(bunnyRelative);
-		editor.app.stage.addChild(bunnyAbsolute);
+		editor.viewport.addChild(relativeBunny);
+		editor.app.stage.addChild(absoluteBunny);
 	}, []);
 
 	return (
 		<Stack>
-			<Text>
+			<Text w='200px'>
 				Use the <Code>editor.app</Code> or <Code>editor.viewport</Code>{' '}
 				to append your PIXI.js display objects
 			</Text>

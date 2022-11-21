@@ -1,4 +1,4 @@
-import { Card, Divider, Group, Stack, Title } from '@mantine/core';
+import { Card, Divider, Group, ScrollArea, Stack, Title } from '@mantine/core';
 import {
 	CheckerboardOverlay,
 	ConstraintsSystem,
@@ -64,7 +64,6 @@ export default function BaseEditorDemo({ Component, id }) {
 
 	return (
 		<Stack>
-			<Title order={1}>{id}</Title>
 			<Group align='start'>
 				<Card withBorder>
 					<Stack>
@@ -90,9 +89,16 @@ export default function BaseEditorDemo({ Component, id }) {
 						/>
 					)}
 				</Card>
-				{Boolean(data?.data) && (
-					<Prism language='tsx'>{data!.data}</Prism>
-				)}
+				<Stack>
+					<Title order={1}>{id}</Title>
+					<ScrollArea>
+						{Boolean(data?.data) && (
+							<Prism language='tsx' h='500px'>
+								{data!.data}
+							</Prism>
+						)}
+					</ScrollArea>
+				</Stack>
 			</Group>
 		</Stack>
 	);
